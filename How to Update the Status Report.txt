@@ -1,0 +1,85 @@
+How to Update the Status Report
+
+This dashboard is a static HTML file. You do not need to be a developer to update it, but you will need a basic text editor (like Notepad, TextEdit, or VS Code).
+
+There are two ways to use this dashboard:
+
+Method 1: The "Quick Fix" (For Meetings)
+
+Best for: Making last-minute changes right before a screenshot.
+
+Open crowdstrike_status.html in your browser.
+
+Click directly on any text. (The page is set to contenteditable).
+
+Type your changes.
+
+Take your screenshot.
+⚠️ Note: Refreshing the page will lose these changes. Use Method 2 for permanent updates.
+
+Method 2: Permanent Updates (Code Editing)
+
+Best for: Preparing the report for next week.
+
+Right-click the crowdstrike_status.html file and choose Open With > Notepad (Windows) or TextEdit (Mac).
+
+1. Changing the Date & Overall Status
+
+Look for the top section <div class="header">.
+
+Date: Change Nov 25, 2025 to today's date.
+
+Status: Change the class status-red to status-green or status-amber to change the color of the pill.
+
+2. Updating Progress Bars
+
+Search for class="timeline-bar". You will see a style attribute controlling the width.
+
+Change Progress: Update width: 20%; to whatever percentage you need.
+
+Change Color: Update background: var(--amber); to --green or --red.
+
+Example:
+
+<!-- Before -->
+<div class="timeline-bar" style="width: 20%; background: var(--amber);"></div>
+
+<!-- After (Moved to 50% and Green) -->
+<div class="timeline-bar" style="width: 50%; background: var(--green);"></div>
+
+
+3. Updating Ticket Tables
+
+The tables use standard HTML rows (<tr>) and cells (<td>).
+To add a new ticket, copy a block starting with <tr> and ending with </tr> and paste it into the list.
+
+To change a status color:
+Look for the <span> class inside the cell:
+
+<span class="task-status ts-done"> = Green (Done)
+
+<span class="task-status ts-progress"> = Blue (In Progress)
+
+<span class="task-status ts-blocked"> = Red (Blocked)
+
+<span class="task-status ts-todo"> = Grey (To Do)
+
+4. Updating "Impact" Boxes
+
+Search for impact-box.
+
+Negative Impact: Use class="impact-box" (Red/Warning).
+
+Neutral Impact: Use class="impact-box-neutral" (Grey/Info).
+
+5. Adding New "Tier 0" Tags
+
+Search for class="tier-tag".
+
+Completed App: Use class="tier-tag tag-done" (Green).
+
+Pending App: Use class="tier-tag tag-todo" (Yellow).
+
+💡 Pro-Tip for VS Code Users
+
+If you use VS Code, install the "Live Server" extension. It allows you to right-click the file and choose "Open with Live Server," so you can see your changes update instantly in the browser as you save the file.

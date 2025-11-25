@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrowdStrike Project Status</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --red: #ef4444;
+            --green: #22c55e;
+            --amber: #f59e0b;
+            --blue: #3b82f6;
+            --gray: #64748b;
+            --light-gray: #f1f5f9;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 40px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 20px;
+        }
+        .header h1 { margin: 0; font-size: 28px; }
+        .header .date { color: var(--gray); font-weight: 500; }
+        
+        /* Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
+        }
+        
+        h2 { margin-top: 0; font-size: 18px; color: #475569; margin-bottom: 15px; }
+
+        /* Status Pills */
+        .status-pill {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .status-red { background: #fef2f2; color: var(--red); border: 1px solid #fecaca; }
+        .status-green { background: #f0fdf4; color: var(--green); border: 1px solid #bbf7d0; }
+        .status-amber { background: #fffbeb; color: var(--amber); border: 1px solid #fde68a; }
+
+        /* Timeline Fixes */
+        .timeline-container { margin-top: 15px; }
+        .timeline-row {
+            display: grid;
+            grid-template-columns: 150px 1fr 150px; /* Label | Bar | Status Text */
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 15px;
+        }
+        .timeline-label { font-size: 13px; font-weight: 600; color: #334155; }
+        .timeline-track {
+            height: 12px;
+            background: #f1f5f9;
+            border-radius: 6px;
+            position: relative;
+            overflow: hidden;
+        }
+        .timeline-bar {
+            height: 100%;
+            border-radius: 6px;
+        }
+        .timeline-status {
+            font-size: 12px;
+            font-weight: 600;
+            text-align: right;
+        }
+        .text-red { color: var(--red); }
+        .text-green { color: var(--green); }
+        .text-amber { color: var(--amber); }
+
+        /* Capacity Chart */
+        .capacity-bar {
+            height: 30px;
+            width: 100%;
+            background: #e2e8f0;
+            border-radius: 6px;
+            overflow: hidden;
+            display: flex;
+        }
+        .cap-segment { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: white; font-weight: bold; }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .data-table th { text-align: left; color: var(--gray); padding-bottom: 10px; font-weight: 500; }
+        .data-table td { padding: 8px 0; border-top: 1px solid #f1f5f9; vertical-align: middle; }
+        .age-danger { color: var(--red); font-weight: 600; }
+        
+        .jira-key { font-family: monospace; background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-right: 8px; }
+        .task-status { font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
+        .ts-done { background: #dcfce7; color: #166534; }
+        .ts-progress { background: #dbeafe; color: #1e40af; }
+        .ts-blocked { background: #fee2e2; color: #991b1b; }
+        .ts-ready { background: #f1f5f9; color: #64748b; }
+        .ts-todo { background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; }
+
+
+        /* Tier Tags */
+        .tag-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+        .tier-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .tag-done { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .tag-todo { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+
+        /* Action Items */
+        .action-list { padding-left: 0; list-style: none; margin: 0; }
+        .action-item { 
+            background: #f8fafc; 
+            border: 1px solid #e2e8f0; 
+            padding: 12px; 
+            border-radius: 8px; 
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+        .action-tag {
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 6px;
+        }
+        .at-decision { background: #fef3c7; color: #92400e; }
+        .at-action { background: #dbeafe; color: #1e40af; }
+        .at-context { background: #f3f4f6; color: #4b5563; }
+        .at-blocked { background: #fee2e2; color: #991b1b; }
+
+        .impact-box {
+            margin-top: 8px;
+            padding: 8px;
+            background: #fff1f2;
+            border-left: 3px solid #e11d48;
+            color: #be123c;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 4px;
+        }
+        
+        .impact-box-neutral {
+             margin-top: 8px;
+            padding: 8px;
+            background: #f8fafc;
+            border-left: 3px solid #64748b;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 4px;
+        }
+
+        /* Editable Hint */
+        .editable-hint {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #334155;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 12px;
+            opacity: 0.8;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div>
+        <h1 contenteditable="true">CrowdStrike Project Status</h1>
+        <div class="date" contenteditable="true">Status Report: Nov 25, 2025</div>
+    </div>
+    <div class="status-pill status-red" contenteditable="true">STATUS: BLOCKED</div>
+</div>
+
+<div class="dashboard-grid">
+    
+    <!-- Main Column -->
+    <div>
+        <!-- Executive Summary -->
+        <div class="card">
+            <h2>Executive Summary</h2>
+            <p contenteditable="true" style="line-height: 1.6; color: #334155;">
+                <strong>SaaS Integration (Falcon Shield):</strong> Preparation is complete (Audit, Owner ID, GT Engagement), putting us at ~20% completion. However, the integration phase is now <strong>PAUSED</strong> due to resource constraints.
+                <br><br>
+                <strong>Email Security (Avanan):</strong> Onboarding scheduled, but configuration and Mimecast decommissioning planning are blocked.
+                <br><br>
+                <strong>SIEM / Identity:</strong> Installation of the Syslog Collector in the London office was started but has stalled. 
+                <br><br>
+                <strong>AWS Integration:</strong> The Platform Engineering stream (Nicola) is at risk of slipping to <strong>Q1 2026</strong> due to dependencies on Support availability.
+            </p>
+        </div>
+
+        <!-- Timeline Impact -->
+        <div class="card">
+            <h2>Timeline & Workstreams</h2>
+            <div class="timeline-container">
+                <!-- Row 1 -->
+                <div class="timeline-row">
+                    <div class="timeline-label">AWS Integration</div>
+                    <div class="timeline-track">
+                        <div class="timeline-bar" style="width: 65%; background: var(--green);"></div>
+                    </div>
+                    <div class="timeline-status text-green">Target: Dec 15 (At Risk)</div>
+                </div>
+                <!-- Row 2 -->
+                <div class="timeline-row">
+                    <div class="timeline-label">SaaS (Falcon Shield)</div>
+                    <div class="timeline-track">
+                        <div class="timeline-bar" style="width: 20%; background: var(--amber);"></div>
+                    </div>
+                    <div class="timeline-status text-amber">Paused (~20%)</div>
+                </div>
+                <!-- Row 3 -->
+                <div class="timeline-row">
+                    <div class="timeline-label">Email Sec (Avanan)</div>
+                    <div class="timeline-track">
+                        <div class="timeline-bar" style="width: 10%; background: var(--amber);"></div>
+                    </div>
+                    <div class="timeline-status text-amber">Paused (~10%)</div>
+                </div>
+                <!-- Row 4 -->
+                <div class="timeline-row">
+                    <div class="timeline-label">SIEM / Syslog</div>
+                    <div class="timeline-track">
+                        <div class="timeline-bar" style="width: 15%; background: var(--red);"></div>
+                    </div>
+                    <div class="timeline-status text-red">Stalled (London)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SaaS & Email Detail -->
+        <div class="card">
+            <h2>Advanced Threat Detection (Owner: Me - Support)</h2>
+            <div style="margin-bottom: 15px; font-size: 13px; color: #64748b;">
+                Parent Epic: <strong>PA-1405 (Q3 & Q4 2025)</strong>
+            </div>
+            <table class="data-table" contenteditable="true">
+                <thead>
+                    <tr>
+                        <th style="width: 50%;">Task</th>
+                        <th>Status</th>
+                        <th>Progress Detail</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="jira-key">PA-1406</span>Integrate SaaS Platforms</td>
+                        <td><span class="task-status ts-progress">IN PROGRESS</span></td>
+                        <td>Audit/Prep Done. Integrations Paused.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="jira-key">PA-1407</span>Deploy Avanan</td>
+                        <td><span class="task-status ts-progress">IN PROGRESS</span></td>
+                        <td>11% Done. Onboarding scheduled.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="jira-key">PA-1408</span>Mimecast Decom</td>
+                        <td><span class="task-status ts-todo">TO DO</span></td>
+                        <td>Not Started.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- AWS Detail -->
+        <div class="card">
+            <h2>AWS Workstream Status (Owner: Nicola - PE)</h2>
+            <div style="margin-bottom: 15px; font-size: 13px; color: #64748b;">
+                Parent Ticket: <strong>DSO-3799 (Cloud Threat Detection)</strong>
+            </div>
+            <table class="data-table" contenteditable="true">
+                <thead>
+                    <tr>
+                        <th style="width: 50%;">Task</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="jira-key">DSO-3817</span>Helm Template for KAC</td>
+                        <td><span class="task-status ts-done">DONE</span></td>
+                        <td>Completed</td>
+                    </tr>
+                    <tr>
+                        <td><span class="jira-key">DSO-3820</span>Deployment</td>
+                        <td><span class="task-status ts-progress">IN PROGRESS</span></td>
+                        <td>10% Done. Blocked by Support.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="jira-key">DSO-3848+</span>Deploy to PreProd/Prod</td>
+                        <td><span class="task-status ts-ready">READY</span></td>
+                        <td><strong>Blocked:</strong> Awaiting Support Team input</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Stalled Tickets -->
+        <div class="card">
+            <h2>Blocked Vendor Tickets (Grant Thornton)</h2>
+            <table class="data-table" contenteditable="true">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Subject</th>
+                        <th>Age</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>CTM0002993</td>
+                        <td>Env. Questions & Asset Inventory</td>
+                        <td class="age-danger">2 Months</td>
+                        <td>Awaiting Info</td>
+                    </tr>
+                    <tr>
+                        <td>CTM0002996</td>
+                        <td>Next-Gen SIEM / Log Mgmt</td>
+                        <td class="age-danger">2 Months</td>
+                        <td>Awaiting Info</td>
+                    </tr>
+                    <tr>
+                        <td>CTM0002998</td>
+                        <td>Identity Protection / Azure AD</td>
+                        <td class="age-danger">2 Months</td>
+                        <td>Awaiting Info</td>
+                    </tr>
+                    <tr>
+                        <td>CTM0003131</td>
+                        <td>Falcon Shield Onboarding</td>
+                        <td class="age-danger">22 Days</td>
+                        <td>Awaiting Info</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- Side Column -->
+    <div>
+        <!-- Key Blockers -->
+        <div class="card" style="border-left: 5px solid var(--red);">
+            <h2 style="color: var(--red);">Root Cause: Resource Deadlock</h2>
+            <div contenteditable="true">
+                <p style="font-size: 13px; color: #334155; margin-bottom: 12px;">
+                    The project requires dedicated engineering hours, but all team resources are currently locked on conflicting priorities:
+                </p>
+                <ul style="padding-left: 20px; margin: 0; font-size: 13px; color: #475569; line-height: 1.5;">
+                    <li style="margin-bottom: 8px;"><strong>Senior Engineer (Scott):</strong> 100% committed to Entra/Intune BYOD Project.</li>
+                    <li style="margin-bottom: 8px;"><strong>Mid Engineer (Tunde):</strong> 100% committed to Ticket Queue & 1st Line Support.</li>
+                    <li><strong>Team Lead (Me):</strong> Capacity consumed by <strong>Future Resource Planning</strong>, Strategy & Escalation Management.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Risks -->
+        <div class="card">
+            <h2>Project Risks</h2>
+            <ul contenteditable="true" style="padding-left: 20px; margin: 0; font-size: 14px; line-height: 1.6;">
+                <li style="margin-bottom: 10px;"><strong>Dependencies:</strong> AWS deployment (Nicola) will stall in Q1 2026 without Support team input.</li>
+                <li style="margin-bottom: 10px;"><strong>Blindspots:</strong> Critical systems (Salesforce, GitHub) remain unmonitored by Falcon.</li>
+                <li style="margin-bottom: 10px;"><strong>Vendor Stagnation:</strong> GT cannot proceed on blocked tickets without input.</li>
+            </ul>
+        </div>
+
+        <!-- Recommended Actions & Asks -->
+        <div class="card">
+            <h2>Recommended Actions & Decisions</h2>
+            <ul class="action-list" contenteditable="true">
+                
+                <li class="action-item">
+                    <span class="action-tag at-blocked">Blocked Task</span>
+                    <strong>MDR Asset Context (Identity/VPN/VIPs)</strong>
+                    <div style="margin-top: 5px; color: #64748b;">
+                        Gather missing context (Domain Controllers, VPN Gateways, VIP list) to finalize Asset Inventory for GT (CTM0002993).
+                    </div>
+                    <div class="impact-box">
+                        STATUS: Unassigned. Requires ~2hrs dedicated focus. Currently blocked by BAU load.
+                    </div>
+                </li>
+
+                <li class="action-item">
+                    <span class="action-tag at-decision">Decision</span>
+                    <strong>Reprioritise Tunde (Mid)</strong>
+                    <div style="margin-top: 5px; color: #64748b;">
+                        Allocate 2 days/week to assist with Tier 0 SaaS integrations (Salesforce/Slack) to unblock progress.
+                    </div>
+                    <div class="impact-box">
+                        IMPACT: 1st Line Support will be suspended for 2 days/week. SLA breaches are expected.
+                    </div>
+                </li>
+                
+                <li class="action-item">
+                    <span class="action-tag at-context">Context</span>
+                    <strong>Long-term Resourcing</strong>
+                    <div style="margin-top: 5px; color: #64748b;">
+                        A separate business case for additional headcount is currently under review by leadership. This stream is being managed outside of this project group.
+                    </div>
+                    <div class="impact-box-neutral">
+                        IMPACT: Project velocity is expected to stabilize in Q2 pending the outcome of this external review.
+                    </div>
+                </li>
+                
+                <li class="action-item">
+                    <span class="action-tag at-decision">Decision</span>
+                    <strong>Formal Delay Acceptance</strong>
+                    <div style="margin-top: 5px; color: #64748b;">
+                        Officially move AWS Integration target to Q1 2026 to align with current resource reality.
+                    </div>
+                    <div class="impact-box">
+                        IMPACT: Extended period of security blindspots in AWS environment.
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
