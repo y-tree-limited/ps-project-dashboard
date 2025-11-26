@@ -48,11 +48,26 @@
             padding: 24px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             margin-bottom: 24px;
+            border-left: 5px solid transparent; /* Default no border */
+            transition: border-color 0.3s ease;
         }
         
-        h2 { margin-top: 0; font-size: 18px; color: #475569; margin-bottom: 15px; }
+        h2 { margin-top: 0; font-size: 18px; color: #475569; margin-bottom: 15px; transition: color 0.3s ease; }
 
-        /* Status Pills */
+        /* Dynamic Card Statuses */
+        .card-status-red { border-left-color: var(--red); }
+        .card-status-red h2 { color: var(--red); cursor: pointer; }
+
+        .card-status-amber { border-left-color: var(--amber); }
+        .card-status-amber h2 { color: var(--amber); cursor: pointer; }
+
+        .card-status-green { border-left-color: var(--green); }
+        .card-status-green h2 { color: var(--green); cursor: pointer; }
+
+        .card-status-blue { border-left-color: var(--blue); }
+        .card-status-blue h2 { color: var(--blue); cursor: pointer; }
+
+        /* Status Pills - Interactive */
         .status-pill {
             display: inline-block;
             padding: 4px 12px;
@@ -60,7 +75,11 @@
             font-size: 13px;
             font-weight: 700;
             text-transform: uppercase;
+            cursor: pointer;
+            transition: filter 0.2s ease;
         }
+        .status-pill:hover { filter: brightness(95%); }
+
         .status-red { background: #fef2f2; color: var(--red); border: 1px solid #fecaca; }
         .status-green { background: #f0fdf4; color: var(--green); border: 1px solid #bbf7d0; }
         .status-amber { background: #fffbeb; color: var(--amber); border: 1px solid #fde68a; }
@@ -86,7 +105,15 @@
             height: 100%;
             border-radius: 6px;
             pointer-events: none; /* Let clicks pass through to slider */
+            transition: background 0.2s ease, width 0.1s ease;
         }
+
+        /* Dynamic Bar Colors */
+        .bg-green { background: var(--green); }
+        .bg-amber { background: var(--amber); }
+        .bg-red { background: var(--red); }
+        .bg-blue { background: var(--blue); }
+        .bg-gray { background: #94a3b8; }
         
         /* The Invisible Slider Overlay */
         .bar-slider {
@@ -105,10 +132,18 @@
             font-size: 12px;
             font-weight: 600;
             text-align: right;
+            transition: color 0.2s ease;
+            cursor: pointer; /* Clickable */
+            padding: 4px;
+            border-radius: 4px;
         }
+        .timeline-status:hover { background-color: #f1f5f9; }
+
         .text-red { color: var(--red); }
         .text-green { color: var(--green); }
         .text-amber { color: var(--amber); }
+        .text-blue { color: var(--blue); }
+        .text-gray { color: var(--gray); }
 
         /* Capacity Chart */
         .capacity-bar {
@@ -129,10 +164,24 @@
         }
         .data-table th { text-align: left; color: var(--gray); padding-bottom: 10px; font-weight: 500; }
         .data-table td { padding: 8px 0; border-top: 1px solid #f1f5f9; vertical-align: middle; }
-        .age-danger { color: var(--red); font-weight: 600; }
+        
+        /* Age Colors - Interactive */
+        .age-danger { color: var(--red); font-weight: 600; cursor: pointer; }
+        .age-warning { color: var(--amber); font-weight: 600; cursor: pointer; }
+        .age-success { color: var(--green); font-weight: 600; cursor: pointer; }
         
         .jira-key { font-family: monospace; background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-right: 8px; }
-        .task-status { font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
+        .task-status { 
+            font-size: 11px; 
+            font-weight: 700; 
+            padding: 2px 6px; 
+            border-radius: 4px; 
+            text-transform: uppercase;
+            cursor: pointer; 
+            transition: filter 0.2s ease;
+        }
+        .task-status:hover { filter: brightness(95%); }
+
         .ts-done { background: #dcfce7; color: #166534; }
         .ts-progress { background: #dbeafe; color: #1e40af; }
         .ts-blocked { background: #fee2e2; color: #991b1b; }
@@ -175,27 +224,23 @@
         .at-context { background: #f3f4f6; color: #4b5563; }
         .at-blocked { background: #fee2e2; color: #991b1b; }
 
-        .impact-box {
+        /* Impact Boxes - Clickable */
+        .impact-box, .impact-box-neutral, .impact-box-success {
             margin-top: 8px;
             padding: 8px;
-            background: #fff1f2;
-            border-left: 3px solid #e11d48;
-            color: #be123c;
             font-size: 12px;
             font-weight: 500;
             border-radius: 4px;
+            cursor: pointer; /* Show it's clickable */
+            transition: all 0.2s ease;
         }
-        
-        .impact-box-neutral {
-             margin-top: 8px;
-            padding: 8px;
-            background: #f8fafc;
-            border-left: 3px solid #64748b;
-            color: #475569;
-            font-size: 12px;
-            font-weight: 500;
-            border-radius: 4px;
-        }
+
+        /* Negative (Red) */
+        .impact-box { background: #fff1f2; border-left: 3px solid #e11d48; color: #be123c; }
+        /* Neutral (Grey) */
+        .impact-box-neutral { background: #f8fafc; border-left: 3px solid #64748b; color: #475569; }
+        /* Positive (Green) */
+        .impact-box-success { background: #f0fdf4; border-left: 3px solid #16a34a; color: #15803d; }
 
         /* Editable Hint */
         .editable-hint {
@@ -219,7 +264,7 @@
         <h1 contenteditable="true">CrowdStrike Project Status</h1>
         <div class="date" contenteditable="true">Status Report: Nov 25, 2025</div>
     </div>
-    <div class="status-pill status-red" contenteditable="true" title="Click text to edit">STATUS: BLOCKED</div>
+    <div class="status-pill status-red" contenteditable="true" title="Click to cycle status">STATUS: BLOCKED</div>
 </div>
 
 <div class="dashboard-grid">
@@ -228,7 +273,7 @@
     <div>
         <!-- Executive Summary -->
         <div class="card">
-            <h2>Executive Summary</h2>
+            <h2 contenteditable="true">Executive Summary</h2>
             <p contenteditable="true" style="line-height: 1.6; color: #334155;">
                 <strong>SaaS Integration (Falcon Shield):</strong> Preparation is complete (Audit, Owner ID, GT Engagement), putting us at ~20% completion. However, the integration phase is now <strong>PAUSED</strong> due to resource constraints.
                 <br><br>
@@ -242,52 +287,52 @@
 
         <!-- Timeline Impact -->
         <div class="card">
-            <h2>Timeline & Workstreams</h2>
-            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 10px;">💡 Drag bars to update progress</div>
+            <h2 contenteditable="true">Timeline & Workstreams</h2>
+            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 10px;">💡 Drag slider to resize. Click text (e.g. "Target...") to change color.</div>
             <div class="timeline-container">
                 <!-- Row 1 -->
                 <div class="timeline-row">
                     <div class="timeline-label">AWS Integration</div>
                     <div class="timeline-track">
-                        <div class="timeline-bar" id="bar1" style="width: 65%; background: var(--green);"></div>
+                        <div class="timeline-bar bg-green" id="bar1" style="width: 65%;"></div>
                         <input type="range" min="0" max="100" value="65" class="bar-slider" oninput="document.getElementById('bar1').style.width = this.value + '%'">
                     </div>
-                    <div class="timeline-status text-green" contenteditable="true">Target: Dec 15 (At Risk)</div>
+                    <div class="timeline-status text-green" contenteditable="true" title="Click to change color">Target: Dec 15 (At Risk)</div>
                 </div>
                 <!-- Row 2 -->
                 <div class="timeline-row">
                     <div class="timeline-label">SaaS (Falcon Shield)</div>
                     <div class="timeline-track">
-                        <div class="timeline-bar" id="bar2" style="width: 20%; background: var(--amber);"></div>
+                        <div class="timeline-bar bg-amber" id="bar2" style="width: 20%;"></div>
                         <input type="range" min="0" max="100" value="20" class="bar-slider" oninput="document.getElementById('bar2').style.width = this.value + '%'">
                     </div>
-                    <div class="timeline-status text-amber" contenteditable="true">Paused (~20%)</div>
+                    <div class="timeline-status text-amber" contenteditable="true" title="Click to change color">Paused (~20%)</div>
                 </div>
                 <!-- Row 3 -->
                 <div class="timeline-row">
                     <div class="timeline-label">Email Sec (Avanan)</div>
                     <div class="timeline-track">
-                        <div class="timeline-bar" id="bar3" style="width: 10%; background: var(--amber);"></div>
+                        <div class="timeline-bar bg-amber" id="bar3" style="width: 10%;"></div>
                         <input type="range" min="0" max="100" value="10" class="bar-slider" oninput="document.getElementById('bar3').style.width = this.value + '%'">
                     </div>
-                    <div class="timeline-status text-amber" contenteditable="true">Paused (~10%)</div>
+                    <div class="timeline-status text-amber" contenteditable="true" title="Click to change color">Paused (~10%)</div>
                 </div>
                 <!-- Row 4 -->
                 <div class="timeline-row">
                     <div class="timeline-label">SIEM / Syslog</div>
                     <div class="timeline-track">
-                        <div class="timeline-bar" id="bar4" style="width: 15%; background: var(--red);"></div>
+                        <div class="timeline-bar bg-red" id="bar4" style="width: 15%;"></div>
                         <input type="range" min="0" max="100" value="15" class="bar-slider" oninput="document.getElementById('bar4').style.width = this.value + '%'">
                     </div>
-                    <div class="timeline-status text-red" contenteditable="true">Stalled (London)</div>
+                    <div class="timeline-status text-red" contenteditable="true" title="Click to change color">Stalled (London)</div>
                 </div>
             </div>
         </div>
 
         <!-- SaaS & Email Detail -->
         <div class="card">
-            <h2>🛡️ Advanced Threat Detection (Owner: Me - Support)</h2>
-            <div style="margin-bottom: 15px; font-size: 13px; color: #64748b;">
+            <h2 contenteditable="true">🛡️ Advanced Threat Detection (Owner: Me - Support)</h2>
+            <div style="margin-bottom: 15px; font-size: 13px; color: #64748b;" contenteditable="true">
                 Parent Epic: <strong>PA-1405 (Q3 & Q4 2025)</strong>
             </div>
             <table class="data-table" contenteditable="true">
@@ -301,17 +346,17 @@
                 <tbody>
                     <tr>
                         <td><span class="jira-key">PA-1406</span>Integrate SaaS Platforms</td>
-                        <td><span class="task-status ts-progress">IN PROGRESS</span></td>
+                        <td><span class="task-status ts-progress" contenteditable="true">IN PROGRESS</span></td>
                         <td>Audit/Prep Done. Integrations Paused.</td>
                     </tr>
                     <tr>
                         <td><span class="jira-key">PA-1407</span>Deploy Avanan</td>
-                        <td><span class="task-status ts-progress">IN PROGRESS</span></td>
+                        <td><span class="task-status ts-progress" contenteditable="true">IN PROGRESS</span></td>
                         <td>11% Done. Onboarding scheduled.</td>
                     </tr>
                     <tr>
                         <td><span class="jira-key">PA-1408</span>Mimecast Decom</td>
-                        <td><span class="task-status ts-todo">TO DO</span></td>
+                        <td><span class="task-status ts-todo" contenteditable="true">TO DO</span></td>
                         <td>Not Started.</td>
                     </tr>
                 </tbody>
@@ -320,8 +365,8 @@
 
         <!-- AWS Detail -->
         <div class="card">
-            <h2>☁️ AWS Workstream Status (Owner: Nicola - PE)</h2>
-            <div style="margin-bottom: 15px; font-size: 13px; color: #64748b;">
+            <h2 contenteditable="true">☁️ AWS Workstream Status (Owner: Nicola - PE)</h2>
+            <div style="margin-bottom: 15px; font-size: 13px; color: #64748b;" contenteditable="true">
                 Parent Ticket: <strong>DSO-3799 (Cloud Threat Detection)</strong>
             </div>
             <table class="data-table" contenteditable="true">
@@ -335,17 +380,17 @@
                 <tbody>
                     <tr>
                         <td><span class="jira-key">DSO-3817</span>Helm Template for KAC</td>
-                        <td><span class="task-status ts-done">DONE</span></td>
+                        <td><span class="task-status ts-done" contenteditable="true">DONE</span></td>
                         <td>Completed</td>
                     </tr>
                     <tr>
                         <td><span class="jira-key">DSO-3820</span>Deployment</td>
-                        <td><span class="task-status ts-progress">IN PROGRESS</span></td>
+                        <td><span class="task-status ts-progress" contenteditable="true">IN PROGRESS</span></td>
                         <td>10% Done. Blocked by Support.</td>
                     </tr>
                     <tr>
                         <td><span class="jira-key">DSO-3848+</span>Deploy to PreProd/Prod</td>
-                        <td><span class="task-status ts-ready">READY</span></td>
+                        <td><span class="task-status ts-ready" contenteditable="true">READY</span></td>
                         <td><strong>Blocked:</strong> Awaiting Support Team input</td>
                     </tr>
                 </tbody>
@@ -354,7 +399,7 @@
 
         <!-- Stalled Tickets -->
         <div class="card">
-            <h2>🚫 Blocked Vendor Tickets (Grant Thornton)</h2>
+            <h2 contenteditable="true">🚫 Blocked Vendor Tickets (Grant Thornton)</h2>
             <table class="data-table" contenteditable="true">
                 <thead>
                     <tr>
@@ -368,25 +413,25 @@
                     <tr>
                         <td>CTM0002993</td>
                         <td>Env. Questions & Asset Inventory</td>
-                        <td class="age-danger">2 Months</td>
+                        <td class="age-danger" title="Click to change severity">2 Months</td>
                         <td>Awaiting Info</td>
                     </tr>
                     <tr>
                         <td>CTM0002996</td>
                         <td>Next-Gen SIEM / Log Mgmt</td>
-                        <td class="age-danger">2 Months</td>
+                        <td class="age-danger" title="Click to change severity">2 Months</td>
                         <td>Awaiting Info</td>
                     </tr>
                     <tr>
                         <td>CTM0002998</td>
                         <td>Identity Protection / Azure AD</td>
-                        <td class="age-danger">2 Months</td>
+                        <td class="age-danger" title="Click to change severity">2 Months</td>
                         <td>Awaiting Info</td>
                     </tr>
                     <tr>
                         <td>CTM0003131</td>
                         <td>Falcon Shield Onboarding</td>
-                        <td class="age-danger">22 Days</td>
+                        <td class="age-danger" title="Click to change severity">22 Days</td>
                         <td>Awaiting Info</td>
                     </tr>
                 </tbody>
@@ -398,23 +443,23 @@
     <!-- Side Column -->
     <div>
         <!-- Key Blockers -->
-        <div class="card" style="border-left: 5px solid var(--red);">
-            <h2 style="color: var(--red);">Root Cause: Resource Deadlock</h2>
+        <div class="card card-status-red" id="root-cause-card">
+            <h2 contenteditable="true" title="Click to change theme">Root Cause: Resource Deadlock</h2>
             <div contenteditable="true">
                 <p style="font-size: 13px; color: #334155; margin-bottom: 12px;">
                     The project requires dedicated engineering hours, but all team resources are currently locked on conflicting priorities:
                 </p>
                 <ul style="padding-left: 20px; margin: 0; font-size: 13px; color: #475569; line-height: 1.5;">
-                    <li style="margin-bottom: 8px;"><strong>Senior Engineer (Scott):</strong> 100% committed to Entra/Intune BYOD Project.</li>
-                    <li style="margin-bottom: 8px;"><strong>Mid Engineer (Tunde):</strong> 100% committed to Ticket Queue & 1st Line Support.</li>
-                    <li><strong>Team Lead (Me):</strong> Capacity consumed by <strong>Future Resource Planning</strong>, Strategy & Escalation Management.</li>
+                    <li style="margin-bottom: 8px;"><strong>Scott:</strong> 100% committed to Entra/Intune BYOD Project.</li>
+                    <li style="margin-bottom: 8px;"><strong>Tunde:</strong> 100% committed to Ticket Queue & 1st Line Support.</li>
+                    <li><strong>Corey</strong> Capacity consumed by <strong>Future Resource Planning</strong>, Strategy & Escalation Management.</li>
                 </ul>
             </div>
         </div>
 
         <!-- Risks -->
         <div class="card">
-            <h2>⚠️ Project Risks</h2>
+            <h2 contenteditable="true">⚠️ Project Risks</h2>
             <ul contenteditable="true" style="padding-left: 20px; margin: 0; font-size: 14px; line-height: 1.6;">
                 <li style="margin-bottom: 10px;"><strong>Dependencies:</strong> AWS deployment (Nicola) will stall in Q1 2026 without Support team input.</li>
                 <li style="margin-bottom: 10px;"><strong>Blindspots:</strong> Critical systems (Salesforce, GitHub) remain unmonitored by Falcon.</li>
@@ -424,49 +469,49 @@
 
         <!-- Recommended Actions & Asks -->
         <div class="card">
-            <h2>Recommended Actions & Decisions</h2>
+            <h2 contenteditable="true">Recommended Actions & Decisions</h2>
             <ul class="action-list" contenteditable="true">
                 
                 <li class="action-item">
-                    <span class="action-tag at-blocked">Blocked Task</span>
-                    <strong>MDR Asset Context (Identity/VPN/VIPs)</strong>
-                    <div style="margin-top: 5px; color: #64748b;">
+                    <span class="action-tag at-blocked" contenteditable="true">Blocked Task</span>
+                    <strong contenteditable="true">MDR Asset Context (Identity/VPN/VIPs)</strong>
+                    <div style="margin-top: 5px; color: #64748b;" contenteditable="true">
                         Gather missing context (Domain Controllers, VPN Gateways, VIP list) to finalize Asset Inventory for GT (CTM0002993).
                     </div>
-                    <div class="impact-box">
+                    <div class="impact-box" title="Click to toggle color theme" contenteditable="true">
                         🚫 STATUS: Unassigned. Requires ~2hrs dedicated focus. Currently blocked by BAU load.
                     </div>
                 </li>
 
                 <li class="action-item">
-                    <span class="action-tag at-decision">Decision</span>
-                    <strong>Reprioritise Tunde (Mid)</strong>
-                    <div style="margin-top: 5px; color: #64748b;">
+                    <span class="action-tag at-decision" contenteditable="true">Decision</span>
+                    <strong contenteditable="true">Reprioritise Tunde (Mid)</strong>
+                    <div style="margin-top: 5px; color: #64748b;" contenteditable="true">
                         Allocate 2 days/week to assist with Tier 0 SaaS integrations (Salesforce/Slack) to unblock progress.
                     </div>
-                    <div class="impact-box">
+                    <div class="impact-box" title="Click to toggle color theme" contenteditable="true">
                         📉 IMPACT: 1st Line Support will be suspended for 2 days/week. SLA breaches are expected.
                     </div>
                 </li>
                 
                 <li class="action-item">
-                    <span class="action-tag at-context">Context</span>
-                    <strong>Long-term Resourcing</strong>
-                    <div style="margin-top: 5px; color: #64748b;">
+                    <span class="action-tag at-context" contenteditable="true">Context</span>
+                    <strong contenteditable="true">Long-term Resourcing</strong>
+                    <div style="margin-top: 5px; color: #64748b;" contenteditable="true">
                         A separate business case for additional headcount is currently under review by leadership. This stream is being managed outside of this project group.
                     </div>
-                    <div class="impact-box-neutral">
+                    <div class="impact-box-neutral" title="Click to toggle color theme" contenteditable="true">
                         🔄 IMPACT: Project velocity is expected to stabilize in Q2 pending the outcome of this external review.
                     </div>
                 </li>
                 
                 <li class="action-item">
-                    <span class="action-tag at-decision">Decision</span>
-                    <strong>Formal Delay Acceptance</strong>
-                    <div style="margin-top: 5px; color: #64748b;">
+                    <span class="action-tag at-decision" contenteditable="true">Decision</span>
+                    <strong contenteditable="true">Formal Delay Acceptance</strong>
+                    <div style="margin-top: 5px; color: #64748b;" contenteditable="true">
                         Officially move AWS Integration target to Q1 2026 to align with current resource reality.
                     </div>
-                    <div class="impact-box">
+                    <div class="impact-box" title="Click to toggle color theme" contenteditable="true">
                         ⚠️ IMPACT: Extended period of security blindspots in AWS environment.
                     </div>
                 </li>
@@ -477,7 +522,127 @@
 
 </div>
 
-<div class="editable-hint">💡 Click any text to edit before screenshotting</div>
+<!-- Script to handle color toggling -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // 1. Impact Boxes (Three Way Toggle)
+        const impactClasses = ['impact-box', 'impact-box-neutral', 'impact-box-success'];
+        document.querySelectorAll('.impact-box, .impact-box-neutral, .impact-box-success').forEach(box => {
+            if (box.getAttribute('data-clickable') === 'true') return;
+            box.setAttribute('data-clickable', 'true');
+            box.addEventListener('click', function(e) {
+                e.preventDefault(); e.stopPropagation();
+                let currentClassIndex = impactClasses.findIndex(cls => this.classList.contains(cls));
+                if (currentClassIndex > -1) this.classList.remove(impactClasses[currentClassIndex]);
+                let nextClassIndex = (currentClassIndex + 1) % impactClasses.length;
+                this.classList.add(impactClasses[nextClassIndex]);
+            });
+        });
+
+        // 2. Status Pills (Cycle Colors)
+        const statusClasses = ['ts-todo', 'ts-progress', 'ts-ready', 'ts-done', 'ts-blocked'];
+        document.querySelectorAll('.task-status').forEach(pill => {
+            if (pill.getAttribute('data-clickable') === 'true') return;
+            pill.setAttribute('data-clickable', 'true');
+            pill.title = "Click to toggle status";
+            pill.addEventListener('click', function(e) {
+                let currentClassIndex = statusClasses.findIndex(cls => this.classList.contains(cls));
+                if (currentClassIndex > -1) this.classList.remove(statusClasses[currentClassIndex]);
+                else currentClassIndex = -1;
+                let nextClassIndex = (currentClassIndex + 1) % statusClasses.length;
+                this.classList.add(statusClasses[nextClassIndex]);
+            });
+        });
+
+        // 3. Header Status Pill (Cycle Colors)
+        const headerStatusClasses = ['status-red', 'status-amber', 'status-green'];
+        const headerPill = document.querySelector('.header .status-pill');
+        if (headerPill) {
+            headerPill.addEventListener('click', function(e) {
+                let currentClassIndex = headerStatusClasses.findIndex(cls => this.classList.contains(cls));
+                if (currentClassIndex > -1) this.classList.remove(headerStatusClasses[currentClassIndex]);
+                else currentClassIndex = -1;
+                let nextClassIndex = (currentClassIndex + 1) % headerStatusClasses.length;
+                this.classList.add(headerStatusClasses[nextClassIndex]);
+            });
+        }
+
+        // 4. Age Cells (Cycle Colors)
+        const ageClasses = ['age-danger', 'age-warning', 'age-success'];
+        document.querySelectorAll('.age-danger, .age-warning, .age-success').forEach(cell => {
+            if (cell.getAttribute('data-clickable') === 'true') return;
+            cell.setAttribute('data-clickable', 'true');
+            cell.title = "Click to toggle severity";
+            cell.addEventListener('click', function(e) {
+                let currentClassIndex = ageClasses.findIndex(cls => this.classList.contains(cls));
+                if (currentClassIndex > -1) this.classList.remove(ageClasses[currentClassIndex]);
+                let nextClassIndex = (currentClassIndex + 1) % ageClasses.length;
+                this.classList.add(ageClasses[nextClassIndex]);
+            });
+        });
+
+        // 5. Timeline Colors (Click Status Text to Toggle Bar Color AND Text Color)
+        const barClasses = ['bg-green', 'bg-amber', 'bg-red', 'bg-blue', 'bg-gray'];
+        const textClasses = ['text-green', 'text-amber', 'text-red', 'text-blue', 'text-gray'];
+
+        document.querySelectorAll('.timeline-status').forEach(statusText => {
+            // Make clickable
+            statusText.style.cursor = 'pointer';
+            
+            statusText.addEventListener('click', function(e) {
+                // Prevent contenteditable focus if not needed (optional, but good for color toggling)
+                // e.preventDefault(); 
+
+                // Find the sibling track and then the bar
+                const row = this.parentElement;
+                const bar = row.querySelector('.timeline-bar');
+
+                let currentClassIndex = textClasses.findIndex(cls => this.classList.contains(cls));
+                
+                // Remove current classes
+                if (currentClassIndex > -1) {
+                    this.classList.remove(textClasses[currentClassIndex]);
+                    if(bar) bar.classList.remove(barClasses[currentClassIndex]);
+                } else {
+                    currentClassIndex = -1;
+                }
+
+                // Calculate next index
+                let nextClassIndex = (currentClassIndex + 1) % textClasses.length;
+                
+                // Add next classes
+                this.classList.add(textClasses[nextClassIndex]);
+                if(bar) bar.classList.add(barClasses[nextClassIndex]);
+            });
+        });
+
+        // 6. Root Cause Card (Click Header to Toggle Theme)
+        const cardClasses = ['card-status-red', 'card-status-amber', 'card-status-green', 'card-status-blue'];
+        const rootCauseCard = document.getElementById('root-cause-card');
+        if(rootCauseCard) {
+            const header = rootCauseCard.querySelector('h2');
+            if(header) {
+                header.addEventListener('click', function(e) {
+                    let currentClassIndex = cardClasses.findIndex(cls => rootCauseCard.classList.contains(cls));
+                    if (currentClassIndex > -1) rootCauseCard.classList.remove(cardClasses[currentClassIndex]);
+                    else currentClassIndex = -1;
+                    let nextClassIndex = (currentClassIndex + 1) % cardClasses.length;
+                    rootCauseCard.classList.add(cardClasses[nextClassIndex]);
+                });
+            }
+        }
+
+        // Periodic re-scan for new content added via copy/paste
+        setInterval(() => {
+            document.querySelectorAll('.task-status').forEach(pill => {
+                if (pill.getAttribute('data-clickable') !== 'true') {
+                    // Add logic to re-bind if needed (simplified here)
+                }
+            });
+        }, 2000);
+    });
+</script>
 
 </body>
 </html>
