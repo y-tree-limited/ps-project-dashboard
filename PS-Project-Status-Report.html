@@ -34,6 +34,7 @@
         }
         .header h1 { margin: 0; font-size: 28px; }
         .header .date { color: var(--gray); font-weight: 500; }
+        .header-actions { display: flex; gap: 10px; align-items: center; }
         
         /* Grid Layout */
         .dashboard-grid {
@@ -242,6 +243,20 @@
         /* Positive (Green) */
         .impact-box-success { background: #f0fdf4; border-left: 3px solid #16a34a; color: #15803d; }
 
+        /* Save Button */
+        .btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .btn-save { background: #0f172a; color: white; }
+        .btn-save:hover { background: #334155; }
+        .btn-reset { background: transparent; border: 1px solid #cbd5e1; color: #64748b; }
+        .btn-reset:hover { background: #f1f5f9; color: #ef4444; border-color: #fecaca; }
+
         /* Editable Hint */
         .editable-hint {
             position: fixed;
@@ -261,10 +276,14 @@
 
 <div class="header">
     <div>
-        <h1 contenteditable="true">CrowdStrike Project Status</h1>
-        <div class="date" contenteditable="true">Status Report: Nov 25, 2025</div>
+        <h1 contenteditable="true" id="report-title">CrowdStrike Project Status</h1>
+        <div class="date" contenteditable="true" id="report-date">Status Report: Dec 10, 2025</div>
     </div>
-    <div class="status-pill status-red" contenteditable="true" title="Click to cycle status">STATUS: BLOCKED</div>
+    <div class="header-actions">
+        <button class="btn btn-reset" onclick="resetDashboard()">Reset</button>
+        <button class="btn btn-save" onclick="saveDashboard()">Save Changes</button>
+        <div class="status-pill status-amber" contenteditable="true" title="Click to cycle status" id="overall-status">STATUS: WINDING DOWN</div>
+    </div>
 </div>
 
 <div class="dashboard-grid">
@@ -274,68 +293,79 @@
         <!-- Executive Summary -->
         <div class="card">
             <h2 contenteditable="true">Executive Summary</h2>
-            <p contenteditable="true" style="line-height: 1.6; color: #334155;">
-                <strong>SaaS Integration (Falcon Shield):</strong> Preparation is complete (Audit, Owner ID, GT Engagement), putting us at ~20% completion. However, the integration phase is now <strong>PAUSED</strong> due to resource constraints.
-                <br><br>
-                <strong>Email Security (Avanan):</strong> Onboarding scheduled, but configuration and Mimecast decommissioning planning are blocked.
-                <br><br>
-                <strong>SIEM / Identity:</strong> Installation of the Syslog Collector in the London office was started but has stalled. 
-                <br><br>
-                <strong>AWS Integration:</strong> The Platform Engineering stream (Nicola) is at risk of slipping to <strong>Q1 2026</strong> due to dependencies on Support availability.
-            </p>
+            <div id="exec-summary" contenteditable="true">
+                <p style="line-height: 1.6; color: #334155;">
+                    <strong>Year-End Status:</strong> As we approach the holiday period and the upcoming <strong>Tech-Wide Change Freeze (9 Days)</strong>, the team is slowing down project velocity to focus on stability and Q1 preparation.
+                    <br><br>
+                    <strong>Platform Engineering:</strong> Will continue to own the Asset Management completion and remaining Falcon Sensor deployments during the freeze.
+                    <br><br>
+                    <strong>Support Team Focus:</strong> Shifting focus away from CrowdStrike integration to close out BYOD and Intune projects before year-end.
+                    <br><br>
+                    <strong>Alpine Resolution:</strong> The Alpine Linux incompatibility was resolved via migration to HAProxy. No rollback required.
+                </p>
+            </div>
         </div>
 
         <!-- Timeline Impact -->
         <div class="card">
             <h2 contenteditable="true">Timeline & Workstreams</h2>
-            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 10px;">💡 Drag slider to resize. Click text (e.g. "Target...") to change color.</div>
+            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 10px;">Drag slider to resize. Click text (e.g. "Target...") to change color.</div>
             <div class="timeline-container">
                 <!-- Row 1 -->
                 <div class="timeline-row">
                     <div class="timeline-label">AWS Integration</div>
                     <div class="timeline-track">
-                        <div class="timeline-bar bg-green" id="bar1" style="width: 65%;"></div>
-                        <input type="range" min="0" max="100" value="65" class="bar-slider" oninput="document.getElementById('bar1').style.width = this.value + '%'">
+                        <div class="timeline-bar bg-green" id="bar1" style="width: 90%;"></div>
+                        <input type="range" min="0" max="100" value="90" class="bar-slider" title="Double-click to cycle color" oninput="document.getElementById('bar1').style.width = this.value + '%'">
                     </div>
-                    <div class="timeline-status text-green" contenteditable="true" title="Click to change color">Target: Dec 15 (At Risk)</div>
+                    <div class="timeline-status text-green" contenteditable="true" title="Click to change color" id="status-text-1">KAC/Sensor Deployed</div>
                 </div>
                 <!-- Row 2 -->
                 <div class="timeline-row">
                     <div class="timeline-label">SaaS (Falcon Shield)</div>
                     <div class="timeline-track">
-                        <div class="timeline-bar bg-amber" id="bar2" style="width: 20%;"></div>
-                        <input type="range" min="0" max="100" value="20" class="bar-slider" oninput="document.getElementById('bar2').style.width = this.value + '%'">
+                        <div class="timeline-bar bg-red" id="bar2" style="width: 25%;"></div>
+                        <input type="range" min="0" max="100" value="25" class="bar-slider" title="Double-click to cycle color" oninput="document.getElementById('bar2').style.width = this.value + '%'">
                     </div>
-                    <div class="timeline-status text-amber" contenteditable="true" title="Click to change color">Paused (~20%)</div>
+                    <div class="timeline-status text-red" contenteditable="true" title="Click to change color" id="status-text-2">Paused (Bug Found)</div>
                 </div>
                 <!-- Row 3 -->
                 <div class="timeline-row">
                     <div class="timeline-label">Email Sec (Avanan)</div>
                     <div class="timeline-track">
-                        <div class="timeline-bar bg-amber" id="bar3" style="width: 10%;"></div>
-                        <input type="range" min="0" max="100" value="10" class="bar-slider" oninput="document.getElementById('bar3').style.width = this.value + '%'">
+                        <div class="timeline-bar bg-amber" id="bar3" style="width: 40%;"></div>
+                        <input type="range" min="0" max="100" value="40" class="bar-slider" title="Double-click to cycle color" oninput="document.getElementById('bar3').style.width = this.value + '%'">
                     </div>
-                    <div class="timeline-status text-amber" contenteditable="true" title="Click to change color">Paused (~10%)</div>
+                    <div class="timeline-status text-amber" contenteditable="true" title="Click to change color" id="status-text-3">Winding Down for Q1</div>
                 </div>
-                <!-- Row 4 -->
+                 <!-- Row 4 -->
+                 <div class="timeline-row">
+                    <div class="timeline-label">SOC Establishment</div>
+                    <div class="timeline-track">
+                        <div class="timeline-bar bg-gray" id="bar4" style="width: 5%;"></div>
+                        <input type="range" min="0" max="100" value="5" class="bar-slider" title="Double-click to cycle color" oninput="document.getElementById('bar4').style.width = this.value + '%'">
+                    </div>
+                    <div class="timeline-status text-gray" contenteditable="true" title="Click to change color" id="status-text-4">Scheduled for Q1</div>
+                </div>
+                <!-- Row 5 -->
                 <div class="timeline-row">
                     <div class="timeline-label">SIEM / Syslog</div>
                     <div class="timeline-track">
-                        <div class="timeline-bar bg-red" id="bar4" style="width: 15%;"></div>
-                        <input type="range" min="0" max="100" value="15" class="bar-slider" oninput="document.getElementById('bar4').style.width = this.value + '%'">
+                        <div class="timeline-bar bg-green" id="bar5" style="width: 60%;"></div>
+                        <input type="range" min="0" max="100" value="60" class="bar-slider" title="Double-click to cycle color" oninput="document.getElementById('bar5').style.width = this.value + '%'">
                     </div>
-                    <div class="timeline-status text-red" contenteditable="true" title="Click to change color">Stalled (London)</div>
+                    <div class="timeline-status text-green" contenteditable="true" title="Click to change color" id="status-text-5">FW Done. Unifi Next.</div>
                 </div>
             </div>
         </div>
 
         <!-- SaaS & Email Detail -->
         <div class="card">
-            <h2 contenteditable="true">🛡️ Advanced Threat Detection (Owner: Me - Support)</h2>
+            <h2 contenteditable="true">Advanced Threat Detection (Owner: Me - Support)</h2>
             <div style="margin-bottom: 15px; font-size: 13px; color: #64748b;" contenteditable="true">
                 Parent Epic: <strong>PA-1405 (Q3 & Q4 2025)</strong>
             </div>
-            <table class="data-table" contenteditable="true">
+            <table class="data-table" contenteditable="true" id="saas-table">
                 <thead>
                     <tr>
                         <th style="width: 50%;">Task</th>
@@ -346,18 +376,18 @@
                 <tbody>
                     <tr>
                         <td><span class="jira-key">PA-1406</span>Integrate SaaS Platforms</td>
-                        <td><span class="task-status ts-progress" contenteditable="true">IN PROGRESS</span></td>
-                        <td>Audit/Prep Done. Integrations Paused.</td>
+                        <td><span class="task-status ts-blocked" contenteditable="true">BLOCKED</span></td>
+                        <td>Paused due to visibility bug.</td>
                     </tr>
                     <tr>
                         <td><span class="jira-key">PA-1407</span>Deploy Avanan</td>
-                        <td><span class="task-status ts-progress" contenteditable="true">IN PROGRESS</span></td>
-                        <td>11% Done. Onboarding scheduled.</td>
+                        <td><span class="task-status ts-ready" contenteditable="true">PAUSED</span></td>
+                        <td>Paused for Change Freeze.</td>
                     </tr>
                     <tr>
                         <td><span class="jira-key">PA-1408</span>Mimecast Decom</td>
-                        <td><span class="task-status ts-todo" contenteditable="true">TO DO</span></td>
-                        <td>Not Started.</td>
+                        <td><span class="task-status ts-todo" contenteditable="true">Q1 2026</span></td>
+                        <td>Scheduled for Q1.</td>
                     </tr>
                 </tbody>
             </table>
@@ -365,11 +395,11 @@
 
         <!-- AWS Detail -->
         <div class="card">
-            <h2 contenteditable="true">☁️ AWS Workstream Status (Owner: Nicola - PE)</h2>
+            <h2 contenteditable="true">AWS Workstream Status (Owner: Nicola - PE)</h2>
             <div style="margin-bottom: 15px; font-size: 13px; color: #64748b;" contenteditable="true">
                 Parent Ticket: <strong>DSO-3799 (Cloud Threat Detection)</strong>
             </div>
-            <table class="data-table" contenteditable="true">
+            <table class="data-table" contenteditable="true" id="aws-table">
                 <thead>
                     <tr>
                         <th style="width: 50%;">Task</th>
@@ -385,22 +415,22 @@
                     </tr>
                     <tr>
                         <td><span class="jira-key">DSO-3820</span>Deployment</td>
-                        <td><span class="task-status ts-progress" contenteditable="true">IN PROGRESS</span></td>
-                        <td>10% Done. Blocked by Support.</td>
+                        <td><span class="task-status ts-done" contenteditable="true">DONE</span></td>
+                        <td>Deployed to Dev, PreProd, Prod & Office.</td>
                     </tr>
                     <tr>
-                        <td><span class="jira-key">DSO-3848+</span>Deploy to PreProd/Prod</td>
-                        <td><span class="task-status ts-ready" contenteditable="true">READY</span></td>
-                        <td><strong>Blocked:</strong> Awaiting Support Team input</td>
+                        <td><span class="jira-key">DSO-NEW</span>Falcon Image Analyzer</td>
+                        <td><span class="task-status ts-progress" contenteditable="true">IN PROGRESS</span></td>
+                        <td>Configuring in Dev. May need GT Support.</td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <!-- Stalled Tickets -->
+        <!-- Vendor Tickets -->
         <div class="card">
-            <h2 contenteditable="true">🚫 Blocked Vendor Tickets (Grant Thornton)</h2>
-            <table class="data-table" contenteditable="true">
+            <h2 contenteditable="true">Vendor Tickets (Grant Thornton)</h2>
+            <table class="data-table" contenteditable="true" id="vendor-table">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -411,22 +441,34 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>CTM0002993</td>
-                        <td>Env. Questions & Asset Inventory</td>
-                        <td class="age-danger" title="Click to change severity">2 Months</td>
-                        <td>Awaiting Info</td>
+                        <td>CTM0002998</td>
+                        <td>Identity Protection Onboarding</td>
+                        <td class="age-success" title="Click to change severity">-</td>
+                        <td>DONE (GT to Close)</td>
+                    </tr>
+                    <tr>
+                        <td>CTM0002994</td>
+                        <td>Tech Account & Risk Mgmt</td>
+                        <td class="age-success" title="Click to change severity">-</td>
+                        <td>DONE (GT to Close)</td>
+                    </tr>
+                    <tr>
+                        <td>CTM0002999</td>
+                        <td>Managed SOC - Cloud</td>
+                        <td class="age-success" title="Click to change severity">-</td>
+                        <td>IN PROGRESS (Unblocked)</td>
                     </tr>
                     <tr>
                         <td>CTM0002996</td>
                         <td>Next-Gen SIEM / Log Mgmt</td>
-                        <td class="age-danger" title="Click to change severity">2 Months</td>
-                        <td>Awaiting Info</td>
+                        <td class="age-warning" title="Click to change severity">2 Months</td>
+                        <td>AWAITING GT RESPONSE</td>
                     </tr>
                     <tr>
-                        <td>CTM0002998</td>
-                        <td>Identity Protection / Azure AD</td>
-                        <td class="age-danger" title="Click to change severity">2 Months</td>
-                        <td>Awaiting Info</td>
+                        <td>CTM0002993</td>
+                        <td>Env. Questions & Inventory</td>
+                        <td class="age-warning" title="Click to change severity">2 Months</td>
+                        <td>SCHEDULED (Jamie Next Wk)</td>
                     </tr>
                     <tr>
                         <td>CTM0003131</td>
@@ -444,42 +486,55 @@
     <div>
         <!-- Key Blockers -->
         <div class="card card-status-red" id="root-cause-card">
-            <h2 contenteditable="true" title="Click to change theme">Root Cause: Resource Deadlock</h2>
-            <div contenteditable="true">
+            <h2 contenteditable="true" title="Click to change theme">Current Blocker: SaaS Visibility</h2>
+            <div contenteditable="true" id="root-cause-text">
                 <p style="font-size: 13px; color: #334155; margin-bottom: 12px;">
-                    The project requires dedicated engineering hours, but all team resources are currently locked on conflicting priorities:
+                    <strong>Dashboard Data Unavailable.</strong>
                 </p>
-                <ul style="padding-left: 20px; margin: 0; font-size: 13px; color: #475569; line-height: 1.5;">
-                    <li style="margin-bottom: 8px;"><strong>Scott:</strong> 100% committed to Entra/Intune BYOD Project.</li>
-                    <li style="margin-bottom: 8px;"><strong>Tunde:</strong> 100% committed to Ticket Queue & 1st Line Support.</li>
-                    <li><strong>Corey</strong> Capacity consumed by <strong>Future Resource Planning</strong>, Strategy & Escalation Management.</li>
-                </ul>
+                <p style="font-size: 13px; color: #334155; margin-bottom: 12px;">
+                    We cannot verify the successful enrollment of SaaS applications due to a dashboard visibility bug. Enrollment is paused until this is resolved with the vendor.
+                </p>
             </div>
         </div>
 
         <!-- Risks -->
         <div class="card">
-            <h2 contenteditable="true">⚠️ Project Risks</h2>
-            <ul contenteditable="true" style="padding-left: 20px; margin: 0; font-size: 14px; line-height: 1.6;">
-                <li style="margin-bottom: 10px;"><strong>Dependencies:</strong> AWS deployment (Nicola) will stall in Q1 2026 without Support team input.</li>
-                <li style="margin-bottom: 10px;"><strong>Blindspots:</strong> Critical systems (Salesforce, GitHub) remain unmonitored by Falcon.</li>
-                <li style="margin-bottom: 10px;"><strong>Vendor Stagnation:</strong> GT cannot proceed on blocked tickets without input.</li>
+            <h2 contenteditable="true">Project Risks</h2>
+            <ul contenteditable="true" style="padding-left: 20px; margin: 0; font-size: 14px; line-height: 1.6;" id="risk-list">
+                <li style="margin-bottom: 10px;"><strong>SaaS Visibility:</strong> Bug preventing verification of SaaS integration.</li>
+                <li style="margin-bottom: 10px;"><strong>Blindspots:</strong> Critical systems (Salesforce, GitHub) remain unmonitored by Falcon until SaaS bug resolved.</li>
             </ul>
         </div>
 
         <!-- Recommended Actions & Asks -->
         <div class="card">
             <h2 contenteditable="true">Recommended Actions & Decisions</h2>
-            <ul class="action-list" contenteditable="true">
+            <ul class="action-list" contenteditable="true" id="action-list">
                 
                 <li class="action-item">
-                    <span class="action-tag at-blocked" contenteditable="true">Blocked Task</span>
-                    <strong contenteditable="true">MDR Asset Context (Identity/VPN/VIPs)</strong>
+                    <span class="action-tag at-action" contenteditable="true">Action</span>
+                    <strong contenteditable="true">Decommission Alpine VMs</strong>
                     <div style="margin-top: 5px; color: #64748b;" contenteditable="true">
-                        Gather missing context (Domain Controllers, VPN Gateways, VIP list) to finalize Asset Inventory for GT (CTM0002993).
+                         Verify decommission of legacy Alpine Load Balancers now that traffic is on the Firewall.
                     </div>
-                    <div class="impact-box" title="Click to toggle color theme" contenteditable="true">
-                        🚫 STATUS: Unassigned. Requires ~2hrs dedicated focus. Currently blocked by BAU load.
+                </li>
+
+                <li class="action-item">
+                    <span class="action-tag at-decision" contenteditable="true">Decision</span>
+                    <strong contenteditable="true">Decommission Legacy Infra</strong>
+                    <div style="margin-top: 5px; color: #64748b;" contenteditable="true">
+                        Confirm destruction of 'PBS', 'JUM 1/2', and 'LB 1/2'. Moving these to FW removes the need to secure them.
+                    </div>
+                    <div class="impact-box-success" title="Click to toggle color theme" contenteditable="true">
+                        IMPACT: Reduces attack surface and licensing costs.
+                    </div>
+                </li>
+
+                <li class="action-item">
+                    <span class="action-tag at-context" contenteditable="true">Context</span>
+                    <strong contenteditable="true">Unifi Tier 0 Scope</strong>
+                    <div style="margin-top: 5px; color: #64748b;" contenteditable="true">
+                        Clarify with GT: Was Unifi excluded from Tier 0 intentionally, or was it an oversight?
                     </div>
                 </li>
 
@@ -490,31 +545,10 @@
                         Allocate 2 days/week to assist with Tier 0 SaaS integrations (Salesforce/Slack) to unblock progress.
                     </div>
                     <div class="impact-box" title="Click to toggle color theme" contenteditable="true">
-                        📉 IMPACT: 1st Line Support will be suspended for 2 days/week. SLA breaches are expected.
+                        IMPACT: 1st Line Support will be suspended for 2 days/week. SLA breaches are expected.
                     </div>
                 </li>
                 
-                <li class="action-item">
-                    <span class="action-tag at-context" contenteditable="true">Context</span>
-                    <strong contenteditable="true">Long-term Resourcing</strong>
-                    <div style="margin-top: 5px; color: #64748b;" contenteditable="true">
-                        A separate business case for additional headcount is currently under review by leadership. This stream is being managed outside of this project group.
-                    </div>
-                    <div class="impact-box-neutral" title="Click to toggle color theme" contenteditable="true">
-                        🔄 IMPACT: Project velocity is expected to stabilize in Q2 pending the outcome of this external review.
-                    </div>
-                </li>
-                
-                <li class="action-item">
-                    <span class="action-tag at-decision" contenteditable="true">Decision</span>
-                    <strong contenteditable="true">Formal Delay Acceptance</strong>
-                    <div style="margin-top: 5px; color: #64748b;" contenteditable="true">
-                        Officially move AWS Integration target to Q1 2026 to align with current resource reality.
-                    </div>
-                    <div class="impact-box" title="Click to toggle color theme" contenteditable="true">
-                        ⚠️ IMPACT: Extended period of security blindspots in AWS environment.
-                    </div>
-                </li>
             </ul>
         </div>
 
@@ -522,125 +556,234 @@
 
 </div>
 
-<!-- Script to handle color toggling -->
+<div class="editable-hint">Click text to edit. Drag slider to resize. Click status text to cycle colors. <strong>Don't forget to SAVE!</strong></div>
+
+<!-- Script to handle color toggling and saving -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         
-        // 1. Impact Boxes (Three Way Toggle)
-        const impactClasses = ['impact-box', 'impact-box-neutral', 'impact-box-success'];
-        document.querySelectorAll('.impact-box, .impact-box-neutral, .impact-box-success').forEach(box => {
-            if (box.getAttribute('data-clickable') === 'true') return;
-            box.setAttribute('data-clickable', 'true');
-            box.addEventListener('click', function(e) {
-                e.preventDefault(); e.stopPropagation();
-                let currentClassIndex = impactClasses.findIndex(cls => this.classList.contains(cls));
-                if (currentClassIndex > -1) this.classList.remove(impactClasses[currentClassIndex]);
-                let nextClassIndex = (currentClassIndex + 1) % impactClasses.length;
-                this.classList.add(impactClasses[nextClassIndex]);
-            });
-        });
+        // --- SAVE / LOAD LOGIC ---
+        
+        function saveDashboard() {
+            const data = {
+                title: document.getElementById('report-title').innerHTML,
+                date: document.getElementById('report-date').innerHTML,
+                statusClass: document.getElementById('overall-status').className,
+                statusText: document.getElementById('overall-status').innerHTML,
+                execSummary: document.getElementById('exec-summary').innerHTML,
+                
+                // Timeline
+                timeline: [],
+                
+                // Tables
+                saasTable: document.getElementById('saas-table').innerHTML,
+                awsTable: document.getElementById('aws-table').innerHTML,
+                vendorTable: document.getElementById('vendor-table').innerHTML,
+                
+                // Side Column
+                rootCauseClass: document.getElementById('root-cause-card').className,
+                rootCauseText: document.getElementById('root-cause-text').innerHTML,
+                riskList: document.getElementById('risk-list').innerHTML,
+                actionList: document.getElementById('action-list').innerHTML
+            };
 
-        // 2. Status Pills (Cycle Colors)
-        const statusClasses = ['ts-todo', 'ts-progress', 'ts-ready', 'ts-done', 'ts-blocked'];
-        document.querySelectorAll('.task-status').forEach(pill => {
-            if (pill.getAttribute('data-clickable') === 'true') return;
-            pill.setAttribute('data-clickable', 'true');
-            pill.title = "Click to toggle status";
-            pill.addEventListener('click', function(e) {
-                let currentClassIndex = statusClasses.findIndex(cls => this.classList.contains(cls));
-                if (currentClassIndex > -1) this.classList.remove(statusClasses[currentClassIndex]);
-                else currentClassIndex = -1;
-                let nextClassIndex = (currentClassIndex + 1) % statusClasses.length;
-                this.classList.add(statusClasses[nextClassIndex]);
+            // Capture timeline state
+            document.querySelectorAll('.timeline-row').forEach((row, index) => {
+                const bar = row.querySelector('.timeline-bar');
+                const slider = row.querySelector('.bar-slider');
+                const status = row.querySelector('.timeline-status');
+                
+                data.timeline.push({
+                    barWidth: bar.style.width,
+                    barClass: bar.className, // saves color
+                    sliderValue: slider.value,
+                    statusText: status.innerHTML,
+                    statusClass: status.className
+                });
             });
-        });
 
-        // 3. Header Status Pill (Cycle Colors)
-        const headerStatusClasses = ['status-red', 'status-amber', 'status-green'];
-        const headerPill = document.querySelector('.header .status-pill');
-        if (headerPill) {
-            headerPill.addEventListener('click', function(e) {
-                let currentClassIndex = headerStatusClasses.findIndex(cls => this.classList.contains(cls));
-                if (currentClassIndex > -1) this.classList.remove(headerStatusClasses[currentClassIndex]);
-                else currentClassIndex = -1;
-                let nextClassIndex = (currentClassIndex + 1) % headerStatusClasses.length;
-                this.classList.add(headerStatusClasses[nextClassIndex]);
-            });
+            localStorage.setItem('crowdstrike_dashboard_save', JSON.stringify(data));
+            alert('Dashboard state saved to this browser!');
         }
 
-        // 4. Age Cells (Cycle Colors)
-        const ageClasses = ['age-danger', 'age-warning', 'age-success'];
-        document.querySelectorAll('.age-danger, .age-warning, .age-success').forEach(cell => {
-            if (cell.getAttribute('data-clickable') === 'true') return;
-            cell.setAttribute('data-clickable', 'true');
-            cell.title = "Click to toggle severity";
-            cell.addEventListener('click', function(e) {
-                let currentClassIndex = ageClasses.findIndex(cls => this.classList.contains(cls));
-                if (currentClassIndex > -1) this.classList.remove(ageClasses[currentClassIndex]);
-                let nextClassIndex = (currentClassIndex + 1) % ageClasses.length;
-                this.classList.add(ageClasses[nextClassIndex]);
-            });
-        });
-
-        // 5. Timeline Colors (Click Status Text to Toggle Bar Color AND Text Color)
-        const barClasses = ['bg-green', 'bg-amber', 'bg-red', 'bg-blue', 'bg-gray'];
-        const textClasses = ['text-green', 'text-amber', 'text-red', 'text-blue', 'text-gray'];
-
-        document.querySelectorAll('.timeline-status').forEach(statusText => {
-            // Make clickable
-            statusText.style.cursor = 'pointer';
+        function loadDashboard() {
+            const saved = localStorage.getItem('crowdstrike_dashboard_save');
+            if (!saved) return;
             
-            statusText.addEventListener('click', function(e) {
-                // Prevent contenteditable focus if not needed (optional, but good for color toggling)
-                // e.preventDefault(); 
-
-                // Find the sibling track and then the bar
-                const row = this.parentElement;
-                const bar = row.querySelector('.timeline-bar');
-
-                let currentClassIndex = textClasses.findIndex(cls => this.classList.contains(cls));
-                
-                // Remove current classes
-                if (currentClassIndex > -1) {
-                    this.classList.remove(textClasses[currentClassIndex]);
-                    if(bar) bar.classList.remove(barClasses[currentClassIndex]);
-                } else {
-                    currentClassIndex = -1;
-                }
-
-                // Calculate next index
-                let nextClassIndex = (currentClassIndex + 1) % textClasses.length;
-                
-                // Add next classes
-                this.classList.add(textClasses[nextClassIndex]);
-                if(bar) bar.classList.add(barClasses[nextClassIndex]);
-            });
-        });
-
-        // 6. Root Cause Card (Click Header to Toggle Theme)
-        const cardClasses = ['card-status-red', 'card-status-amber', 'card-status-green', 'card-status-blue'];
-        const rootCauseCard = document.getElementById('root-cause-card');
-        if(rootCauseCard) {
-            const header = rootCauseCard.querySelector('h2');
-            if(header) {
-                header.addEventListener('click', function(e) {
-                    let currentClassIndex = cardClasses.findIndex(cls => rootCauseCard.classList.contains(cls));
-                    if (currentClassIndex > -1) rootCauseCard.classList.remove(cardClasses[currentClassIndex]);
-                    else currentClassIndex = -1;
-                    let nextClassIndex = (currentClassIndex + 1) % cardClasses.length;
-                    rootCauseCard.classList.add(cardClasses[nextClassIndex]);
+            const data = JSON.parse(saved);
+            
+            // Restore Header
+            document.getElementById('report-title').innerHTML = data.title;
+            document.getElementById('report-date').innerHTML = data.date;
+            document.getElementById('overall-status').className = data.statusClass;
+            document.getElementById('overall-status').innerHTML = data.statusText;
+            
+            // Restore Summary
+            document.getElementById('exec-summary').innerHTML = data.execSummary;
+            
+            // Restore Tables
+            document.getElementById('saas-table').innerHTML = data.saasTable;
+            document.getElementById('aws-table').innerHTML = data.awsTable;
+            document.getElementById('vendor-table').innerHTML = data.vendorTable;
+            
+            // Restore Side Column
+            document.getElementById('root-cause-card').className = data.rootCauseClass;
+            document.getElementById('root-cause-text').innerHTML = data.rootCauseText;
+            document.getElementById('risk-list').innerHTML = data.riskList;
+            document.getElementById('action-list').innerHTML = data.actionList;
+            
+            // Restore Timeline
+            if(data.timeline && data.timeline.length > 0) {
+                const rows = document.querySelectorAll('.timeline-row');
+                rows.forEach((row, index) => {
+                    if (data.timeline[index]) {
+                        const t = data.timeline[index];
+                        const bar = row.querySelector('.timeline-bar');
+                        const slider = row.querySelector('.bar-slider');
+                        const status = row.querySelector('.timeline-status');
+                        
+                        bar.style.width = t.barWidth;
+                        bar.className = t.barClass; // Restore color class
+                        slider.value = t.sliderValue;
+                        status.innerHTML = t.statusText;
+                        status.className = t.statusClass;
+                    }
                 });
             }
+            
+            // Re-attach event listeners to restored elements
+            reattachListeners();
         }
+        
+        function resetDashboard() {
+            if(confirm("Are you sure? This will clear your saved changes and revert to the template.")) {
+                localStorage.removeItem('crowdstrike_dashboard_save');
+                location.reload();
+            }
+        }
+        
+        // Expose to global scope for buttons
+        window.saveDashboard = saveDashboard;
+        window.resetDashboard = resetDashboard;
 
-        // Periodic re-scan for new content added via copy/paste
-        setInterval(() => {
-            document.querySelectorAll('.task-status').forEach(pill => {
-                if (pill.getAttribute('data-clickable') !== 'true') {
-                    // Add logic to re-bind if needed (simplified here)
-                }
+        // Try load on startup
+        loadDashboard();
+
+
+        // --- INTERACTIVITY LOGIC ---
+
+        function reattachListeners() {
+             // 1. Impact Boxes (Three Way Toggle)
+            const impactClasses = ['impact-box', 'impact-box-neutral', 'impact-box-success'];
+            document.querySelectorAll('.impact-box, .impact-box-neutral, .impact-box-success').forEach(box => {
+                if (box.getAttribute('data-clickable') === 'true') return;
+                box.setAttribute('data-clickable', 'true');
+                box.addEventListener('click', function(e) {
+                    e.preventDefault(); e.stopPropagation();
+                    let currentClassIndex = impactClasses.findIndex(cls => this.classList.contains(cls));
+                    if (currentClassIndex > -1) this.classList.remove(impactClasses[currentClassIndex]);
+                    let nextClassIndex = (currentClassIndex + 1) % impactClasses.length;
+                    this.classList.add(impactClasses[nextClassIndex]);
+                });
             });
-        }, 2000);
+
+            // 2. Status Pills & Tasks (Cycle Colors)
+            const statusClasses = ['ts-todo', 'ts-progress', 'ts-ready', 'ts-done', 'ts-blocked'];
+            document.querySelectorAll('.task-status').forEach(pill => {
+                if (pill.getAttribute('data-clickable') === 'true') return;
+                pill.setAttribute('data-clickable', 'true');
+                pill.title = "Click to toggle status";
+                pill.addEventListener('click', function(e) {
+                    let currentClassIndex = statusClasses.findIndex(cls => this.classList.contains(cls));
+                    if (currentClassIndex > -1) this.classList.remove(statusClasses[currentClassIndex]);
+                    else currentClassIndex = -1;
+                    let nextClassIndex = (currentClassIndex + 1) % statusClasses.length;
+                    this.classList.add(statusClasses[nextClassIndex]);
+                });
+            });
+            
+             // 3. Header Status Pill (Cycle Colors)
+            const headerStatusClasses = ['status-red', 'status-amber', 'status-green'];
+            const headerPill = document.querySelector('.header .status-pill');
+            if (headerPill) {
+                headerPill.addEventListener('click', function(e) {
+                    let currentClassIndex = headerStatusClasses.findIndex(cls => this.classList.contains(cls));
+                    if (currentClassIndex > -1) this.classList.remove(headerStatusClasses[currentClassIndex]);
+                    else currentClassIndex = -1;
+                    let nextClassIndex = (currentClassIndex + 1) % headerStatusClasses.length;
+                    this.classList.add(headerStatusClasses[nextClassIndex]);
+                });
+            }
+
+            // 4. Age Cells (Cycle Colors)
+            const ageClasses = ['age-danger', 'age-warning', 'age-success'];
+            document.querySelectorAll('.age-danger, .age-warning, .age-success').forEach(cell => {
+                if (cell.getAttribute('data-clickable') === 'true') return;
+                cell.setAttribute('data-clickable', 'true');
+                cell.title = "Click to toggle severity";
+                cell.addEventListener('click', function(e) {
+                    let currentClassIndex = ageClasses.findIndex(cls => this.classList.contains(cls));
+                    if (currentClassIndex > -1) this.classList.remove(ageClasses[currentClassIndex]);
+                    let nextClassIndex = (currentClassIndex + 1) % ageClasses.length;
+                    this.classList.add(ageClasses[nextClassIndex]);
+                });
+            });
+
+            // 5. Timeline Colors (Click Status Text to Toggle Bar Color AND Text Color)
+            const barClasses = ['bg-green', 'bg-amber', 'bg-red', 'bg-blue', 'bg-gray'];
+            const textClasses = ['text-green', 'text-amber', 'text-red', 'text-blue', 'text-gray'];
+
+            document.querySelectorAll('.timeline-status').forEach(statusText => {
+                // Make clickable
+                statusText.style.cursor = 'pointer';
+                
+                // Avoid double binding
+                if(statusText.getAttribute('data-bound') === 'true') return;
+                statusText.setAttribute('data-bound', 'true');
+                
+                statusText.addEventListener('click', function(e) {
+                    const row = this.parentElement;
+                    const bar = row.querySelector('.timeline-bar');
+
+                    let currentClassIndex = textClasses.findIndex(cls => this.classList.contains(cls));
+                    
+                    if (currentClassIndex > -1) {
+                        this.classList.remove(textClasses[currentClassIndex]);
+                        if(bar) bar.classList.remove(barClasses[currentClassIndex]);
+                    } else {
+                        currentClassIndex = -1;
+                    }
+
+                    let nextClassIndex = (currentClassIndex + 1) % textClasses.length;
+                    
+                    this.classList.add(textClasses[nextClassIndex]);
+                    if(bar) bar.classList.add(barClasses[nextClassIndex]);
+                });
+            });
+
+            // 6. Root Cause Card (Click Header to Toggle Theme)
+            const cardClasses = ['card-status-red', 'card-status-amber', 'card-status-green', 'card-status-blue'];
+            const rootCauseCard = document.getElementById('root-cause-card');
+            if(rootCauseCard) {
+                const header = rootCauseCard.querySelector('h2');
+                if(header && header.getAttribute('data-bound') !== 'true') {
+                    header.setAttribute('data-bound', 'true');
+                    header.addEventListener('click', function(e) {
+                        let currentClassIndex = cardClasses.findIndex(cls => rootCauseCard.classList.contains(cls));
+                        if (currentClassIndex > -1) rootCauseCard.classList.remove(cardClasses[currentClassIndex]);
+                        else currentClassIndex = -1;
+                        let nextClassIndex = (currentClassIndex + 1) % cardClasses.length;
+                        rootCauseCard.classList.add(cardClasses[nextClassIndex]);
+                    });
+                }
+            }
+        }
+        
+        // Run listeners once on load
+        reattachListeners();
+
+        // Periodic re-scan for new content added via copy/paste (optional, but good for editable tables)
+        setInterval(reattachListeners, 2000);
     });
 </script>
 
